@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Buy Analysis Report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            padding: 20px;
+            background-color: #fafafa;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            vertical-align: top;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            cursor: default;
+        }
+        th.sortable {
+            cursor: pointer;
+            color: #0077cc;
+        }
+        details summary {
+            cursor: pointer;
+            color: #0077cc;
+            font-weight: bold;
+        }
+        .article {
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background-color: #fff;
+        }
+        .article a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .article a:hover {
+            text-decoration: underline;
+        }
+        @media screen and (max-width: 768px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+                width: 100%;
+            }
+            tr {
+                margin-bottom: 20px;
+                border-bottom: 2px solid #ccc;
+            }
+            td {
+                border: none;
+                padding: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>📊 Stock Buy Analysis Report</h2>
+    <table id="analysis-table">
+        <thead>
+            <tr>
+                <th>S.No.</th>
+                <th>Stock Name</th>
+                <th class="sortable" onclick="sortTableByRating()">Buy Rating ⬍</th>
+                <th>Reasoning</th>
+                <th>Articles</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+            <tr>
+                <td>{{ result.s_no }}</td>
+                <td>{{ result.stock_name }}</td>
+                <td data-rating="{{ result.buy_rating|int }}">{{ result.buy_rating }}</td>
+                <td>{{ result.reasoning }}</td>
+                <td>
+                    <details>
+                        <summary>Show Articles</summary>
+                        <div>
+                            {% for article in result.articles %}
+                            <div class="article">
+                                <strong>{{ article.headline }}</strong><br/>
+                                <p><em>Published: {{ article.published_at }}</em></p>
+                                <p>{{ article.description }}</p>
+                                <a href="{{ article.url }}" target="_blank">Read more</a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </details>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        let sortAscending = true;
+
+        function sortTableByRating() {
+            const table = document.getElementById("analysis-table");
+            const tbody = table.querySelector("tbody");
+            const rows = Array.from(tbody.querySelectorAll("tr"));
+
+            rows.sort((a, b) => {
+                const ratingA = parseInt(a.querySelector('td[data-rating]').dataset.rating);
+                const ratingB = parseInt(b.querySelector('td[data-rating]').dataset.rating);
+                return sortAscending ? ratingA - ratingB : ratingB - ratingA;
+            });
+
+            // Append sorted rows back
+            rows.forEach(row => tbody.appendChild(row));
+            sortAscending = !sortAscending;
+        }
+    </script>
+</body>
+</html>
