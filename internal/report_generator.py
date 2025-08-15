@@ -17,12 +17,12 @@ class StockBuyAnalysisExporter:
             headline = article.get("title", "No Title").strip()
             description = article.get("description", "No Description").strip()
             url = article.get("url", "#").strip()
-            published_at = article.get("publishedAt")
+            published_at = article.get("published_at")
             formatted_articles.append({
                 "headline": headline,
                 "description": description,
                 "url": url,
-                "published_at": published_at,
+                "published_at": datetime.fromisoformat(published_at).strftime("%b %d, %Y, %I:%M:%S %p IST"),
             })
 
         self.results.append({

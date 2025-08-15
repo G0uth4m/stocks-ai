@@ -1,10 +1,10 @@
-from groq import Groq
+from openai import OpenAI
 
 
 class StockSentimentAnalyzer:
 
     def __init__(self):
-        self.clients = self._construct_grok_clients()
+        self.clients = self._construct_openai_clients()
         self.iter = 0
         with open("internal/resources/prompt_template.txt", "r") as file:
             self.prompt_template = file.read()
@@ -23,10 +23,11 @@ class StockSentimentAnalyzer:
 
         user_prompt = self.prompt_template.format(description=combined_articles)
 
-        client = self._get_grok_client()
+        client = self._get_openai_client()
 
         response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            extra_body={},
+            model="meta-llama/llama-3.3-70b-instruct:free",
             messages=[
                 {"role": "system", "content": "You are a helpful AI stock market assistant."},
                 {"role": "user", "content": user_prompt},
@@ -36,21 +37,23 @@ class StockSentimentAnalyzer:
         llmresponse = response.choices[0].message.content.strip()
         return llmresponse
     
-    def _construct_grok_clients(self):
-        f = open("grok_api_keys.txt", "r")
+    def _construct_openai_clients(self):
+        f = open("openrouter_api_keys.txt", "r")
         api_keys = f.readlines()
         f.close()
 
         api_clients = []
         for api_key in api_keys:
-            api_clients.append(Groq(api_key=api_key.strip()))
+            client = OpenAI(
+                base_url="https://openrouter.ai/api/v1",
+                api_key=api_key.strip(),
+            )
+            api_clients.append(client)
 
         return api_clients
     
-    def _get_grok_client(self):
+    def _get_openai_client(self):
         client = self.clients[self.iter]
         self.iter = (self.iter + 1) % len(self.clients)
         return client
     
-
-   # error: Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01jz527fnmexqttyb6yftz3x7f` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99832, Requested 807. Please try again in 9m11.724s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}} Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01jz527fnmexqttyb6yftz3x7f` service tier `on_demand` on tokens per day (TPD): Limit 100000, Used 99832, Requested 807. Please try again in 9m11.724s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}

@@ -1,2 +1,6 @@
 __pycache__/
 include/
+Scripts/
+Lib/
+stocks_ai_*
+pyvenv.cfg

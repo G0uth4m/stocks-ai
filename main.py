@@ -13,9 +13,7 @@ if __name__ == "__main__":
     news_sentiment_analyzer = StockSentimentAnalyzer()
     analysis_exporter = StockBuyAnalysisExporter()
 
-    #stock_names = stock_fetcher.get_stock_names(STOCKS_COUNT)
     stock_names = stock_fetcher.get_nifty_500()
-    #stock_names = ["hdfc"]
 
     for i, stock_name in enumerate(stock_names):
         try:
