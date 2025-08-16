@@ -5,6 +5,6 @@ Note that I want to make profits in a day or upto a week. Be critical.
 - Score 50 = neutral / unclear
 - Score 100 = excellent news that could boost the stock price
 
-Respond with single integer between 0 and 100 in the first line. On the second line, mention your reasoning behind the scoring
+Respond strictly in json code block with keys 'average_score' and 'reasoning'.
 
 {description}

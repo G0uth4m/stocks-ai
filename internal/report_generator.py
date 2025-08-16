@@ -1,16 +1,16 @@
 from jinja2 import Environment, FileSystemLoader
 from datetime import datetime
 import os
-
+from internal.email_service import MailGun
 
 class StockBuyAnalysisExporter:
     def __init__(self):
         self.results = []
+        self.emailService = MailGun()
 
     def add_stock_analysis(self, stock_name, articles, llm_response):
-        response_lines = llm_response.strip().split("\n")
-        buy_rating = response_lines[0]
-        reasoning = "\n".join(response_lines[1:])
+        buy_rating = llm_response['average_score']
+        reasoning = llm_response['reasoning']
 
         formatted_articles = []
         for article in articles:
@@ -50,3 +50,6 @@ class StockBuyAnalysisExporter:
             f.write(rendered_html)
 
         print(f"[+] Successfully exported HTML to {filename}")
+
+        self.emailService.send_email("goutham67r@gmail.com", "Daily Stocks Report " + current_timestamp, "Please find the attached report.", filename)
+        print("[+] Successfully sent email")
