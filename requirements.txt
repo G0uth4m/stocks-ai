@@ -29,7 +29,6 @@ mailgun==1.1.0
 MarkupSafe==3.0.2
 multidict==6.6.4
 newsapi-python==0.2.7
-nsepy==0.8
 numpy==2.3.1
 ollama==0.5.1
 openai==1.99.9
@@ -52,3 +51,4 @@ typing_extensions==4.14.0
 tzdata==2025.2
 urllib3==2.5.0
 yarl==1.20.1
+yfinance==0.2.18

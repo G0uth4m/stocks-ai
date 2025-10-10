@@ -2,8 +2,9 @@ from internal.news_api import NewsFetcher
 from internal.news_sentiment import StockSentimentAnalyzer
 from internal.stocks_api import StockFetcher
 from internal.report_generator import StockBuyAnalysisExporter
+from stock_analyzer import StockAnalyzer
 
-STOCKS_COUNT = 100
+STOCKS_COUNT = 6000
 
 
 if __name__ == "__main__":
@@ -12,25 +13,46 @@ if __name__ == "__main__":
     news_fetcher = NewsFetcher()
     news_sentiment_analyzer = StockSentimentAnalyzer()
     analysis_exporter = StockBuyAnalysisExporter()
+    technical_analyzer = StockAnalyzer()
 
-    stock_names = stock_fetcher.get_nifty_500()
+    # Get stock data with both display names and symbols
+    stock_data = stock_fetcher.get_stock_data(STOCKS_COUNT)
 
-    for i, stock_name in enumerate(stock_names):
+    for i, stock_info in enumerate(stock_data):
         try:
-            print(f"[*] {i+1}/{len(stock_names)} Analyzing stock: {stock_name}")
+            stock_name = stock_info["DispSym"]
+            stock_symbol = stock_info["Sym"]
+            
+            print(f"[*] {i+1}/{len(stock_data)} Analyzing stock: {stock_name} ({stock_symbol})")
+            
+            # Get news articles
             keyword = stock_name.lower()
             articles = news_fetcher.get_news_articles(keyword)
             if not articles:
                 print(f"[-] No articles found for stock: {stock_name}. Skipping...\n")
                 continue
 
+            # Get sentiment analysis
             llm_response = news_sentiment_analyzer.get_stock_buy_score(stock_name, articles)
-            analysis_exporter.add_stock_analysis(stock_name, articles, llm_response)
+            
+            # Get technical analysis
+            print(f"[*] Performing technical analysis for {stock_symbol}...")
+            technical_analysis = technical_analyzer.analyze_stock(stock_symbol)
+            
+            # Add to report
+            analysis_exporter.add_stock_analysis(
+                stock_name, 
+                stock_symbol, 
+                articles, 
+                llm_response, 
+                technical_analysis
+            )
 
-            print()
+            print(f"[+] Completed analysis for {stock_name}\n")
+            
         except Exception as e:
-            print (f"error: {e}", e)
-            print(f"[-] Failed while processing stock: {stock_name}. Skipping...", stock_name)
+            print(f"error: {e}", e)
+            print(f"[-] Failed while processing stock: {stock_name}. Skipping...\n")
 
     analysis_exporter.export_to_html()
 

@@ -14,6 +14,12 @@ class StockFetcher:
         self.session.headers.update(self._HEADERS)
 
     def get_stock_names(self, count: int, exchange: Optional[str] = "BSE") -> List[str]:
+        """Get stock display names only (for backward compatibility)"""
+        stock_data = self.get_stock_data(count, exchange)
+        return [item["DispSym"] for item in stock_data]
+    
+    def get_stock_data(self, count: int, exchange: Optional[str] = "BSE") -> List[dict]:
+        """Get stock data with both display name and symbol"""
         params = [
             {
                 "field": "OgInst",
@@ -34,7 +40,7 @@ class StockFetcher:
                 "sorder": "desc",
                 "count": count,
                 "params": params,
-                "fields": ["DispSym"],  # Only the stock name field is needed
+                "fields": ["DispSym", "Sym"],
                 "pgno": 1
             }
         }
@@ -43,7 +49,7 @@ class StockFetcher:
             response = self.session.post(self._API_URL, data=json.dumps(payload))
             response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
             json_response = response.json()
-            return [item["DispSym"] for item in json_response.get("data", [])]
+            return json_response.get("data", [])
         except requests.exceptions.RequestException as e:
             print(f"Error fetching data: {e}")
             return []
@@ -53,7 +59,6 @@ class StockFetcher:
 
 
     def get_nifty_500(self):
-        f = open("nifty_500.txt", "r")
-        nifty_500 = f.readlines()
-        f.close()
+        with open("nifty_500.txt", "r", encoding="utf-8") as f:
+            nifty_500 = f.readlines()
         return [stock.strip() for stock in nifty_500]
