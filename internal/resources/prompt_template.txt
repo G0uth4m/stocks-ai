@@ -1,10 +1,13 @@
-You are an intelligent stock market analyst. Given the following news articles about a company, score the news from 0 to 100 in terms of how likely it is to positively impact the company’s stock price.
-Note that I want to make profits in a day or upto a week. Be critical.
+You are an intelligent stock market analyst. Given the following news articles about a company and its technical analysis data, score the stock from 0 to 100 in terms of how likely it is to be a good buy for short-term profits (1 day). Be critical and consider both fundamental news sentiment and technical indicators.
 
-- Score 0 = very bad news
-- Score 50 = neutral / unclear
-- Score 100 = excellent news that could boost the stock price
+- Score 0 = very bad news + poor technical indicators
+- Score 50 = neutral/unclear news + mixed technical signals
+- Score 100 = excellent news + strong technical buy signals
 
 Respond strictly in json code block with keys 'average_score' and 'reasoning'.
 
+NEWS ARTICLES:
 {description}
+
+TECHNICAL ANALYSIS:
+{technical_analysis}

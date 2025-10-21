@@ -4,7 +4,7 @@ from internal.stocks_api import StockFetcher
 from internal.report_generator import StockBuyAnalysisExporter
 from stock_analyzer import StockAnalyzer
 
-STOCKS_COUNT = 6000
+STOCKS_COUNT = 2
 
 
 if __name__ == "__main__":
@@ -32,12 +32,12 @@ if __name__ == "__main__":
                 print(f"[-] No articles found for stock: {stock_name}. Skipping...\n")
                 continue
 
-            # Get sentiment analysis
-            llm_response = news_sentiment_analyzer.get_stock_buy_score(stock_name, articles)
-            
-            # Get technical analysis
+            # Get technical analysis first
             print(f"[*] Performing technical analysis for {stock_symbol}...")
             technical_analysis = technical_analyzer.analyze_stock(stock_symbol)
+            
+            # Get sentiment analysis with technical data
+            llm_response = news_sentiment_analyzer.get_stock_buy_score(stock_name, articles, technical_analysis)
             
             # Add to report
             analysis_exporter.add_stock_analysis(
