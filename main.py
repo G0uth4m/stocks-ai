@@ -4,7 +4,7 @@ from internal.stocks_api import StockFetcher
 from internal.report_generator import StockBuyAnalysisExporter
 from stock_analyzer import StockAnalyzer
 
-STOCKS_COUNT = 2
+STOCKS_COUNT = 6000
 
 
 if __name__ == "__main__":
