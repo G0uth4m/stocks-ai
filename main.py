@@ -36,8 +36,8 @@ if __name__ == "__main__":
             print(f"[*] Performing technical analysis for {stock_symbol}...")
             technical_analysis = technical_analyzer.analyze_stock(stock_symbol)
             
-            # Get sentiment analysis with technical data
-            llm_response = news_sentiment_analyzer.get_stock_buy_score(stock_name, articles, technical_analysis)
+            # Get sentiment analysis (technical data excluded from LLM)
+            llm_response = news_sentiment_analyzer.get_stock_buy_score(stock_name, articles)
             
             # Add to report
             analysis_exporter.add_stock_analysis(
